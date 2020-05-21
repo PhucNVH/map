@@ -2,6 +2,8 @@ import 'react-native-gesture-handler';
 import React from 'react';
 import AppConnector from './Services/AppConnector';
 import {AppContext} from './Context/AppContext';
+
+import auth from '@react-native-firebase/auth';
 export default class App extends React.Component {
   _isMounted = false;
   constructor(props) {
@@ -20,6 +22,10 @@ export default class App extends React.Component {
   }
   componentDidMount() {
     this._isMounted = true;
+    auth().onAuthStateChanged((user) => {
+      if (user) this.state.setLoggedIn(true);
+      else this.state.setLoggedIn(false);
+    });
   }
   componentWillUnmount() {
     this._isMounted = false;
