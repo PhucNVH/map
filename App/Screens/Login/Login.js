@@ -14,12 +14,6 @@ import colors from '../../Themes/Colors';
 import imageLogo from '../../Assets/Images/logo.png';
 import FormTextInput from './../../Components/FormTextInput';
 import auth from '@react-native-firebase/auth';
-import {GoogleSignin} from '@react-native-community/google-signin';
-
-GoogleSignin.configure({
-  webClientId:
-    '509525541033-e554cv3thb8a4qvl8pn5ducb15l9cuav.apps.googleusercontent.com',
-});
 
 function Login() {
   const context = useContext(AppContext);
@@ -45,22 +39,6 @@ function Login() {
       });
   };
 
-  const onGoogleButtonPress = async () => {
-    // Get the users ID token
-    const {idToken} = await GoogleSignin.signIn();
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-    auth()
-      .signInWithCredential(googleCredential)
-      .then(({user}) => {
-        console.log(user.toJSON());
-        context.setLoggedIn(true);
-      })
-      .catch((e) => {
-        console.log(e);
-        context.setLoggedIn(false);
-      });
-  };
   return (
     <View style={styles.container}>
       <Image source={imageLogo} style={styles.logo} />
@@ -86,14 +64,6 @@ function Login() {
           onPress={() => {
             handleLogin();
           }}
-        />
-        <Button
-          label={'Google Sign-In'}
-          onPress={() =>
-            onGoogleButtonPress().then(() =>
-              console.log('Signed in with Google!'),
-            )
-          }
         />
       </View>
     </View>
