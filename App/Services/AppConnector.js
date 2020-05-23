@@ -6,7 +6,8 @@ import {AppContext} from './../Context/AppContext';
 import SplashScreen from './../Screens/SplashScreen/SplashScreen';
 import Login from './../Screens/Login/Login';
 import Home from './../Screens/HomePage/Home';
-
+import NavBar from './../Components/NavBar';
+import {View} from 'react-native';
 const Stack = createStackNavigator();
 export default class AppConnector extends React.Component {
   static contextType = AppContext;
@@ -29,13 +30,7 @@ export default class AppConnector extends React.Component {
     }
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="home">
-          <Stack.Screen
-            name="home"
-            component={Home}
-            options={{headerShown: false}}
-          />
-        </Stack.Navigator>
+        <NavBar />
       </NavigationContainer>
     );
   }

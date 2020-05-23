@@ -4,6 +4,10 @@ import Button from './../../Components/Button';
 import {AppContext} from '../../Context/AppContext';
 import auth from '@react-native-firebase/auth';
 import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
+import Ionicons from 'react-native-ionicons';
+import NavBar from './../../Components/NavBar';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import Geolocation from '@react-native-community/geolocation';
 import {clockRunning} from 'react-native-reanimated';
@@ -77,20 +81,18 @@ export default class Home extends React.Component {
         <TouchableOpacity
           title={'dsadk'}
           style={{
-            bottom: (this.state.phoneSize.height / 6) * 0.9,
-            right: this.state.phoneSize.width * 0.08,
             height: 50,
             width: 50,
             borderRadius: 25,
             backgroundColor: 'red',
             position: 'absolute',
             alignSelf: 'flex-end',
+            bottom: 50,
           }}
           onPress={() => {
             this.handleLocating();
           }}
         />
-        <View style={{flex: 1}}></View>
       </View>
     );
   }
