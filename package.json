@@ -25,13 +25,16 @@
     "react": "16.11.0",
     "react-native": "0.62.2",
     "react-native-dropdownalert": "^4.2.1",
+    "react-native-cli": "^2.0.1",
+    "react-native-elements": "^2.0.2",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-ionicons": "^5.0.0-rc",
     "react-native-maps": "0.27.1",
     "react-native-reanimated": "^1.9.0",
     "react-native-safe-area-context": "^1.0.0",
     "react-native-screens": "^2.8.0",
-    "react-native-vector-icons": "^6.6.0"
+    "react-native-vector-icons": "^6.6.0",
+    "yarn": "^1.22.4"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",

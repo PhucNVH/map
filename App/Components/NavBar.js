@@ -1,42 +1,28 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import colors from '../Themes/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {NavigationContainer} from '@react-navigation/native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './../Screens/HomePage/Home';
-
-function SettingsScreen() {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Settings!</Text>
-    </View>
-  );
-}
-
-function Hihi() {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Hihi!</Text>
-    </View>
-  );
-}
+import DashBoard from './../Screens/DashBoard/DashBoard';
+import LightButton from './../Screens/LightButton/LightButton';
 
 const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={({route}) => ({
-        tabBarIcon: ({focused, color, size}) => {
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
           if (route.name === 'Home') {
             iconName = 'map';
-          } else if (route.name === 'Setting') {
+          } else if (route.name === 'DashBoard') {
             iconName = 'bars';
-          } else if (route.name === 'Hihi') {
+          } else if (route.name === 'LightButton') {
             iconName = 'check-circle';
           }
           // You can return any component that you like here!
@@ -47,9 +33,9 @@ function MyTabs() {
         activeTintColor: 'tomato',
         inactiveTintColor: 'gray',
       }}>
-      <Tab.Screen name="Hihi" component={Hihi} />
+      <Tab.Screen name="LightButton" component={LightButton} />
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Setting" component={SettingsScreen} />
+      <Tab.Screen name="DashBoard" component={DashBoard} />
     </Tab.Navigator>
   );
 }
