@@ -25,9 +25,10 @@ export default class AppConnector extends React.Component {
   render() {
     if (!this.context.loaded) {
       return <SplashScreen />;
-    } else if (!this.context.loggedIn) {
-      return <Login />;
     }
+    //  else if (!this.context.loggedIn) {
+    //   return <Login />;
+    // }
     return (
       <NavigationContainer>
         <NavBar />
