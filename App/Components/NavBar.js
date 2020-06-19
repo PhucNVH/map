@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import colors from '../Themes/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from './../Screens/HomePage/Home';
 import DashBoard from './../Screens/DashBoard/DashBoard';
 import LightButton from './../Screens/LightButton/LightButton';
@@ -14,8 +14,8 @@ function MyTabs() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+      screenOptions={({route}) => ({
+        tabBarIcon: ({focused, color, size}) => {
           let iconName;
 
           if (route.name === 'Home') {

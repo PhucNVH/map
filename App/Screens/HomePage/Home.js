@@ -17,8 +17,8 @@ import Geolocation from '@react-native-community/geolocation';
 import NetInfo from '@react-native-community/netinfo';
 export default class Home extends React.Component {
   static contextType = AppContext;
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       phoneSize: {
         width: Dimensions.get('window').width,
@@ -47,8 +47,8 @@ export default class Home extends React.Component {
         longitudeDelta: 0.05,
       },
       marker: {
-        latlng: {latitude: 10.7750034, longitude: 106.6580963},
-        title: 'aBC',
+        location: {latitude: 10.7750034, longitude: 106.6580963},
+        time: 0,
       },
     };
   }
@@ -61,6 +61,35 @@ export default class Home extends React.Component {
       .catch((e) => {
         console.log(e);
       });
+  }
+  compareLocation(l1, l2) {
+    return JSON.stringify(l1) === JSON.stringify(l2);
+  }
+  componentDidUpdate(prevProps) {
+    if (this.props.route.params) {
+      if (!(prevProps.route.params === undefined)) {
+        if (
+          !this.compareLocation(
+            this.props.route.params.item,
+            prevProps.route.params.item,
+          )
+        ) {
+          this.setState({
+            marker: {
+              location: {
+                latitude: this.props.route.params.item.location.lat,
+                longitude: this.props.route.params.item.location.long,
+              },
+              time: this.props.route.params.item.time,
+            },
+          });
+        }
+      } else {
+        console.log('ok');
+      }
+    } else {
+      return;
+    }
   }
   componentDidMount() {
     NetInfo.fetch().then((state) => {
@@ -91,7 +120,7 @@ export default class Home extends React.Component {
       );
       this.setState({
         marker: {
-          latlng: {
+          location: {
             latitude: snapshot.val().location.lat,
             longitude: snapshot.val().location.long,
           },
@@ -99,19 +128,18 @@ export default class Home extends React.Component {
         },
       });
     });
-
-    // Geolocation.getCurrentPosition((info) => {
-    //   this.state.currentLocation = {
-    //     latitude: info.coords.latitude,
-    //     longitude: info.coords.longitude,
-    //   };
-    // });
   }
   handleLocating() {
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
       } else {
-        this.dropDownAlertRef.alertWithType('error', 'Error', 'No Network');
+        this.dropDownAlertRef.alertWithType(
+          'error',
+          'Error',
+          'No Network',
+          {},
+          4000,
+        );
       }
     });
     const reference = database().ref('/GPS/latest');
@@ -143,7 +171,7 @@ export default class Home extends React.Component {
         );
         this.setState({
           marker: {
-            latlng: {
+            location: {
               latitude: snapshot.val().location.lat,
               longitude: snapshot.val().location.long,
             },
@@ -170,7 +198,10 @@ export default class Home extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <DropdownAlert ref={(ref) => (this.dropDownAlertRef = ref)} />
+        <DropdownAlert
+          ref={(ref) => (this.dropDownAlertRef = ref)}
+          closeInterval={0}
+        />
         <MapView
           ref={(map) => {
             this.map = map;
@@ -184,8 +215,11 @@ export default class Home extends React.Component {
             this.onRegionChange(region);
           }}>
           <Marker
-            coordinate={this.state.marker.latlng}
-            title={this.state.marker.title}
+            coordinate={this.state.marker.location}
+            title={`${this.state.marker.location.latitude}, ${this.state.marker.location.longitude}`}
+            description={`At: ${new Date(
+              this.state.marker.time,
+            ).toLocaleString()}`}
           />
         </MapView>
 
