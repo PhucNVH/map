@@ -83,6 +83,15 @@ export default class Home extends React.Component {
               time: this.props.route.params.item.time,
             },
           });
+          this.map.animateCamera(
+            {
+              center: {
+                latitude: this.props.route.params.item.location.lat,
+                longitude: this.props.route.params.item.location.long,
+              },
+            },
+            1000,
+          );
         }
       } else {
         console.log('ok');
@@ -175,7 +184,7 @@ export default class Home extends React.Component {
               latitude: snapshot.val().location.lat,
               longitude: snapshot.val().location.long,
             },
-            title: 'abc',
+            time: snapshot.val().time,
           },
         });
       })

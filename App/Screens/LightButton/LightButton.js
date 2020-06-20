@@ -33,7 +33,7 @@ export default class LightButton extends React.Component {
     var details = {
       device_id: this.state.selected,
       state: this.state.switchValue ? 1 : 0,
-      volume: Math.round(this.state.value * 255),
+      brightness: Math.round(this.state.value * 255),
     };
     var formBody = [];
     for (var property in details) {
