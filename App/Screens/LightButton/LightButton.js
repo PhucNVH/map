@@ -17,21 +17,12 @@ export default class LightButton extends React.Component {
         {label: 'LightD', value: 'LightD'},
         {label: 'Light2', value: 'Light2'},
       ],
-      select: null,
     };
   }
   componentDidMount() {}
   handleButton = () => {
-    if (!this.state.selected) {
-      this.dropDownAlertRef.alertWithType(
-        'error',
-        'Error',
-        'No device specify',
-      );
-      return;
-    }
     var details = {
-      device_id: this.state.selected,
+      device_id: 'Light',
       state: this.state.switchValue ? 1 : 0,
       brightness: Math.round(this.state.value * 255),
     };
@@ -88,13 +79,6 @@ export default class LightButton extends React.Component {
     return (
       <View style={styles.container}>
         <DropdownAlert ref={(ref) => (this.dropDownAlertRef = ref)} />
-        <DropDownPicker
-          placeholder="Select a device"
-          items={this.state.data}
-          defaultIndex={0}
-          containerStyle={styles.drowdown}
-          onChangeItem={this.selectItem}
-        />
 
         <View style={styles.switchContainer}>
           <Text style={styles.text}>State</Text>
