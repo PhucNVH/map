@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View, Switch, TouchableOpacity} from 'react-native';
-import {Slider, Button} from 'react-native-elements';
+import {Slider, Button, Icon} from 'react-native-elements';
 import NetInfo from '@react-native-community/netinfo';
 import DropdownAlert from 'react-native-dropdownalert';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -10,6 +10,8 @@ export default class LightButton extends React.Component {
   constructor() {
     super();
     this.state = {
+      startAngle: (Math.PI * 0) / 6,
+      angleLength: (Math.PI * 12) / 6,
       switchValue: false,
       value: 0,
       data: [
@@ -17,9 +19,37 @@ export default class LightButton extends React.Component {
         {label: 'LightD', value: 'LightD'},
         {label: 'Light2', value: 'Light2'},
       ],
+      backgroundColor: {backgroundColor: 'rgb(245,245,245)'},
     };
   }
-  componentDidMount() {}
+  componentDidMount() {
+    database()
+      .ref('Light/Light/latest')
+      .once('value')
+      .then((snapshot) => {
+        const res = snapshot.val();
+        this.setState({
+          switchValue: res.state == 1 ? true : false,
+          value: Number.parseInt(res.brightness, 10) / 255,
+        });
+      });
+  }
+  backgroundColor = () => {
+    let grayScale = 245;
+    grayScale = Math.round(this.state.value * 205) + 40;
+    if (this.state.switchValue == false) {
+      grayScale = 40;
+    }
+    return {backgroundColor: `rgb(${grayScale},${grayScale},${grayScale})`};
+  };
+  textColor = () => {
+    let color = 'black';
+    const grayScale = Math.round(this.state.value * 205) + 40;
+    if (this.state.switchValue == false || grayScale < 145) {
+      color = 'white';
+    }
+    return {color: color};
+  };
   handleButton = () => {
     var details = {
       device_id: 'Light',
@@ -58,52 +88,91 @@ export default class LightButton extends React.Component {
     });
   };
   toggleSwitch = (value) => {
-    this.setState({switchValue: value});
+    this.setState((prevState) => ({
+      switchValue: !prevState.switchValue,
+    }));
   };
-  selectItem = (item) => {
-    const reference = database().ref('/Light/' + item.value);
-    reference
-      .child('latest')
-      .once('value')
-      .then((snapshot) => {
-        const res = snapshot.val();
-        console.log(res);
-        this.setState({
-          switchValue: res.state == 1 ? true : false,
-          value: Number.parseInt(res.brightness, 10) / 255,
-        });
-      });
-    this.setState({selected: item.value});
+  switchStyle = () => {
+    let grayScale = '';
+    if (this.state.switchValue == false) {
+      grayScale = '#000000';
+    } else {
+      grayScale = '#a6dcef';
+    }
+    return {borderColor: grayScale};
+  };
+  buttonTitle = () => {
+    return this.state.switchValue ? 'Off' : ' On';
+  };
+
+  trackColor = () => {
+    let grayScale = '';
+    let color = '#000000';
+    if (this.state.switchValue == false) {
+    } else {
+      color = '#a6dcef';
+    }
+    return color;
+  };
+  lightBulpIcon = () => {
+    let grayScale = '';
+    let color = '#000000';
+    if (this.state.switchValue == false) {
+      grayScale = 'lightbulb-off-outline';
+    } else {
+      grayScale = 'lightbulb-on-outline';
+      color = '#a6dcef';
+    }
+    return (
+      <Icon
+        name={grayScale}
+        size={50}
+        color={color}
+        type={'material-community'}
+      />
+    );
   };
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, this.backgroundColor()]}>
         <DropdownAlert ref={(ref) => (this.dropDownAlertRef = ref)} />
 
-        <View style={styles.switchContainer}>
-          <Text style={styles.text}>State</Text>
-          <Switch
-            style={styles.switch}
-            onValueChange={this.toggleSwitch}
-            value={this.state.switchValue}
-          />
-        </View>
         <View style={styles.sliderContainer}>
-          <Text style={styles.text}>
-            Brightness : {Math.round(this.state.value * 255)}{' '}
+          <Text style={[styles.brightnessText, this.textColor()]}>
+            {Math.round(this.state.value * 255)}
           </Text>
+
           <Slider
             value={this.state.value}
-            onValueChange={(value) => this.setState({value})}
+            style={styles.trackContainer}
+            trackStyle={styles.trackStyle}
+            thumbStyle={styles.thumbStyle}
+            minimumTrackTintColor={this.trackColor()}
+            onValueChange={(value) => {
+              this.setState({
+                value,
+              });
+            }}
           />
         </View>
-        <Button
-          buttonStyle={styles.buttonText}
-          containerStyle={styles.buttonContainer}
-          onPress={this.handleButton}
-          title="Send"
-          raised={true}
-        />
+        <View style={styles.switchContainer}>
+          <Button
+            raised={true}
+            containerStyle={[styles.switch, this.switchStyle()]}
+            buttonStyle={[styles.switchButton]}
+            icon={this.lightBulpIcon()}
+            titleStyle={[styles.titleStyle, this.textColor()]}
+            onPress={this.toggleSwitch}
+          />
+
+          <Button
+            buttonStyle={styles.sendButton}
+            containerStyle={styles.sendButtonContainer}
+            onPress={this.handleButton}
+            title="Send"
+            raised={true}
+          />
+        </View>
       </View>
     );
   }
@@ -111,19 +180,37 @@ export default class LightButton extends React.Component {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    flex: 1,
   },
   drowdown: {height: 50, width: '100%'},
   switchContainer: {
-    width: '100%',
-    height: 50,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flex: 5,
+    justifyContent: 'space-around',
     alignItems: 'center',
   },
-  switch: {width: 50},
+  switch: {
+    height: 150,
+    width: 150,
+    borderRadius: 75,
+    borderWidth: 5,
+    backgroundColor: 'green',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  switchButton: {
+    height: 150,
+    width: 150,
+    backgroundColor: 'rgb(245,245,245)',
+  },
+  titleStyle: {
+    fontSize: 38,
+  },
   sliderContainer: {
-    width: '100%',
-    height: 100,
+    flex: 3,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   button: {
     width: '100%',
@@ -137,5 +224,31 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 32,
     color: 'white',
+  },
+  trackContainer: {
+    width: 300,
+    borderLeftColor: 'green',
+    borderRadius: 30,
+  },
+  trackStyle: {
+    height: 60,
+    borderRadius: 30,
+    borderLeftColor: 'green',
+    backgroundColor: 'red',
+  },
+  thumbStyle: {
+    width: 0,
+    height: 0,
+  },
+  brightnessText: {
+    fontSize: 120,
+  },
+  sendButtonContainer: {
+    width: 200,
+    height: 50,
+    borderRadius: 30,
+  },
+  sendButton: {
+    height: '100%',
   },
 });
