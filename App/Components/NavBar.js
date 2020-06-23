@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from './../Screens/HomePage/Home';
-import DashBoard from './../Screens/DashBoard/DashBoard';
+import Dashboard from './../Screens/Dashboard/Dashboard';
 import LightButton from './../Screens/LightButton/LightButton';
 
 const Tab = createBottomTabNavigator();
@@ -19,11 +19,11 @@ function MyTabs() {
           let iconName;
 
           if (route.name === 'Home') {
-            iconName = 'map';
-          } else if (route.name === 'DashBoard') {
+            iconName = 'map-o';
+          } else if (route.name === 'Dashboard') {
             iconName = 'bars';
           } else if (route.name === 'LightButton') {
-            iconName = 'check-circle';
+            iconName = 'lightbulb-o';
           }
           // You can return any component that you like here!
           return <Icon name={iconName} size={size} color={color} />;
@@ -35,7 +35,7 @@ function MyTabs() {
       }}>
       <Tab.Screen name="LightButton" component={LightButton} />
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="DashBoard" component={DashBoard} />
+      <Tab.Screen name="Dashboard" component={Dashboard} />
     </Tab.Navigator>
   );
 }

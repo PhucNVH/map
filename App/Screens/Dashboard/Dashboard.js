@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import database from '@react-native-firebase/database';
 import {ListItem} from 'react-native-elements';
 import SpinKit from 'react-native-spinkit';
-export default class DashBoard extends React.Component {
+export default class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -42,18 +42,17 @@ export default class DashBoard extends React.Component {
   }
   handleHistory = () => {
     let listGPS = [];
+
+    this.setState({listGPS: []});
     database()
       .ref('GPS/history/')
       .orderByChild('time')
-      .once('value', (snapshot) => {
+      .on('child_added', (snapshot) => {
         const result = snapshot.val();
-        for (let gps in result) {
-          listGPS.push({
-            location: result[gps].location,
-            time: result[gps].time,
-          });
-        }
-        this.setState({listGPS});
+        console.log(result);
+        this.setState((prevState) => ({
+          listGPS: [...prevState.listGPS, result],
+        }));
       });
     this.setState({isVisible: true});
   };
@@ -70,11 +69,6 @@ export default class DashBoard extends React.Component {
       }}
       bottomDivider
       chevron
-      // badge={{
-      //   value: item.isNew ? 'NEW' : '',
-      //   textStyle: {color: 'white', fontSize: 12},
-      //   containerStyle: {},
-      // }}
     />
   );
 
