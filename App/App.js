@@ -11,6 +11,10 @@ export default class App extends React.Component {
     this.state = {
       loaded: false,
       loggedIn: false,
+      newUser: false,
+      setNewUser: (val) => {
+        return this._isMounted && this.setState({newUser: val});
+      },
       setLoaded: (val) => {
         return this._isMounted && this.setState({loaded: val});
       },

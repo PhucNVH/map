@@ -7,12 +7,15 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Home from './../Screens/HomePage/Home';
 import Dashboard from './../Screens/Dashboard/Dashboard';
+
+import index from './../Screens/Dashboard/index';
 import LightButton from './../Screens/LightButton/LightButton';
 
 const Tab = createBottomTabNavigator();
 function MyTabs() {
   return (
     <Tab.Navigator
+      
       initialRouteName="Home"
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
@@ -26,16 +29,18 @@ function MyTabs() {
             iconName = 'lightbulb-o';
           }
           // You can return any component that you like here!
-          return <Icon name={iconName} size={size} color={color} />;
+          return <Icon name={iconName} size={size} color={color}  />;
         },
       })}
       tabBarOptions={{
         activeTintColor: 'tomato',
         inactiveTintColor: 'gray',
-      }}>
+      }}
+      
+      >
       <Tab.Screen name="LightButton" component={LightButton} />
       <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Dashboard" component={Dashboard} />
+      <Tab.Screen name="Dashboard" component={index} />
     </Tab.Navigator>
   );
 }
