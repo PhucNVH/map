@@ -1,48 +1,63 @@
 import React, {useState, useContext} from 'react';
-import {
-  TextInput,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-} from 'react-native';
-import Styles from './LoginStyle';
+import {TextInput, View, Image, Text} from 'react-native';
+import styles from './LoginStyle';
 import {AppContext} from './../../Context/AppContext';
-import Button from './../../Components/Button';
 import strings from '../../Themes/Strings';
-import colors from '../../Themes/Colors';
-import imageLogo from '../../Assets/Images/logo.png';
-import FormTextInput from './../../Components/FormTextInput';
+import imageLogo from '../../Assets/Images/cargo-ship.png';
 import auth from '@react-native-firebase/auth';
-
+import {Overlay, Button} from 'react-native-elements';
 function Login() {
+  const name = 'ShipTracker';
+  const interval = 15 * 60 * 1000;
   const context = useContext(AppContext);
   const [Email, setEmail] = useState('');
   const [Password, setPassword] = useState('');
+  const [Show, setShow] = useState(false);
   const handleLogin = () => {
     auth()
       .signInWithEmailAndPassword(Email, Password)
-      .then(() => {
-        console.log('User account created & signed in!');
+      .then((e) => {
+        if (
+          new Date(e.user.metadata.lastSignInTime) -
+            new Date(e.user.metadata.creationTime) <
+          interval
+        ) {
+          context.setNewUser(true);
+        }
+        // console.log('User account created & signed in!');
         context.setLoggedIn(true);
       })
       .catch((error) => {
-        if (error.code === 'auth/email-already-in-use') {
-          console.log('That email address is already in use!');
-        }
-
-        if (error.code === 'auth/invalid-email') {
-          console.log('That email address is invalid!');
+        switch (error.code) {
+          case 'auth/invalid-email':
+          case 'auth/email-already-in-use':
+          case 'auth/invalid-email':
+            console.log('check your email again');
+            break;
+          case 'auth/user-not-found':
+          case 'auth/wrong-password':
+            console.log('check your email or password');
+            break;
         }
         context.setLoggedIn(false);
-        console.error(error);
+        console.log(error);
       });
   };
 
   return (
     <View style={styles.container}>
+      <Overlay isVisible={Show} onBackdropPress={() => setShow(false)}>
+        <View>
+          <Text>Need help?</Text>
+          <Text>
+            Sorry, you can't create account in the app. We know that's a pain,
+            but you need to have devices set up in your ship before being able
+            to use the app.
+          </Text>
+        </View>
+      </Overlay>
       <Image source={imageLogo} style={styles.logo} />
-
+      <Text style={styles.brandName}>{name}</Text>
       <View style={styles.form}>
         <TextInput
           style={styles.textInput}
@@ -60,40 +75,14 @@ function Login() {
           placeholder={strings.PASSWORD_PLACEHOLDER}
         />
         <Button
-          label={strings.LOGIN_SCREEN}
+          title={strings.LOGIN_SCREEN}
           onPress={() => {
             handleLogin();
           }}
         />
       </View>
+      <Button type="outline" title="Need help?" onPress={() => setShow(true)} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.WHITE,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  logo: {
-    flex: 1,
-    width: '100%',
-    resizeMode: 'contain',
-    alignSelf: 'center',
-  },
-  form: {
-    flex: 1,
-    justifyContent: 'center',
-    width: '80%',
-  },
-  textInput: {
-    height: 40,
-    borderColor: colors.SILVER,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    marginBottom: 20,
-  },
-});
-
 export default Login;

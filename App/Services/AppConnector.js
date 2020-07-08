@@ -5,7 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {AppContext} from './../Context/AppContext';
 import SplashScreen from './../Screens/SplashScreen/SplashScreen';
 import Login from './../Screens/Login/Login';
-import Home from './../Screens/HomePage/Home';
+import Intro from './../Screens/Intro/Intro';
 import NavBar from './../Components/NavBar';
 import {View} from 'react-native';
 const Stack = createStackNavigator();
@@ -25,10 +25,11 @@ export default class AppConnector extends React.Component {
   render() {
     if (!this.context.loaded) {
       return <SplashScreen />;
+    } else if (!this.context.loggedIn) {
+      return <Login />;
+    } else if (this.context.newUser) {
+      // return <Intro />;
     }
-    //  else if (!this.context.loggedIn) {
-    //   return <Login />;
-    // }
     return (
       <NavigationContainer>
         <NavBar />
