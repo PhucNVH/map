@@ -41,18 +41,18 @@ export default class Home extends React.Component {
       initialPosition: {
         latitude: 7,
         longitude: 107,
-        latitudeDelta: 2,
-        longitudeDelta: 2,
+        latitudeDelta: 1,
+        longitudeDelta: 1,
       },
       delta: {
-        latitudeDelta: 0.05,
-        longitudeDelta: 0.05,
+        latitudeDelta: 1,
+        longitudeDelta: 1,
       },
       latestGPS: {
         latitude: 7,
         longitude: 107,
-        latitudeDelta: 2,
-        longitudeDelta: 2,
+        latitudeDelta: 1,
+        longitudeDelta: 1,
       },
       marker: {
         location: {latitude: 7, longitude: 107},
@@ -71,7 +71,7 @@ export default class Home extends React.Component {
         this.dropDownAlertRef.alertWithType('error', 'Error', 'No Network');
       }
     });
-    const reference = database().ref('/GPS/latest');
+
     const areaCollection = firestore().collection('area');
     areaCollection.get().then((snapshot) => {
       let res = snapshot.docs.map((e) => e.data());
@@ -83,7 +83,6 @@ export default class Home extends React.Component {
       this.setState({heatPoints: res});
     });
     this._unsubscribe = this.props.navigation.addListener('focus', () => {
-      console.log('dsdsd');
       const connectionCollection = firestore()
         .collection('ship')
         .doc(this.user.uid)
@@ -120,37 +119,46 @@ export default class Home extends React.Component {
       });
     });
 
-    reference.once('value').then((snapshot) => {
-      this.setState({
-        region: {
-          latitude: snapshot.val().location.lat,
-          longitude: snapshot.val().location.long,
-          latitudeDelta: 2,
-          longitudeDelta: 2,
-        },
-      });
-      this.map.animateCamera(
-        {
-          center: {
-            latitude: snapshot.val().location.lat,
-            longitude: snapshot.val().location.long,
+    this._newestLocation = firestore()
+      .collection('ship')
+      .doc(this.user.uid)
+      .onSnapshot((snapshot) => {
+        const data = snapshot.data();
+        const latitude = data.location._latitude;
+        const longitude = data.location._longitude;
+        const time = new Date(data.time._seconds * 1000);
+
+        this.setState({
+          region: {
+            latitude,
+            longitude,
+            latitudeDelta: 1,
+            longitudeDelta: 1,
           },
-        },
-        1000,
-      );
-      this.setState({
-        marker: {
-          location: {
-            latitude: snapshot.val().location.lat,
-            longitude: snapshot.val().location.long,
+        });
+        this.map.animateCamera(
+          {
+            center: {
+              latitude,
+              longitude,
+            },
           },
-          title: 'abc',
-        },
+          1000,
+        );
+        this.setState({
+          marker: {
+            location: {
+              latitude,
+              longitude,
+            },
+            title: this.user.displayName,
+          },
+        });
       });
-    });
   }
   componentWillUnMount() {
     this._unsubscribe();
+    this._newestLocation();
   }
   handleLocating() {
     NetInfo.fetch().then((state) => {
@@ -165,20 +173,25 @@ export default class Home extends React.Component {
         );
       }
     });
-    const reference = database().ref('/GPS/latest');
-    reference
-      .once('value')
+    firestore()
+      .collection('ship')
+      .doc(this.user.uid)
+      .get()
       .then((snapshot) => {
+        const data = snapshot.data();
+        const latitude = data.location._latitude;
+        const longitude = data.location._longitude;
+        const time = new Date(data.time._seconds * 1000);
         this.setState({
           region: {
-            latitude: snapshot.val().location.lat,
-            longitude: snapshot.val().location.long,
+            latitude: latitude,
+            longitude: longitude,
             latitudeDelta: 2,
             longitudeDelta: 2,
           },
           latestGPS: {
-            latitude: snapshot.val().location.lat,
-            longitude: snapshot.val().location.long,
+            latitude: latitude,
+            longitude: longitude,
             latitudeDelta: 2,
             longitudeDelta: 2,
           },
@@ -186,8 +199,8 @@ export default class Home extends React.Component {
         this.map.animateCamera(
           {
             center: {
-              latitude: snapshot.val().location.lat,
-              longitude: snapshot.val().location.long,
+              latitude: latitude,
+              longitude: longitude,
             },
           },
           1000,
@@ -195,19 +208,17 @@ export default class Home extends React.Component {
         this.dropDownAlertRef.alertWithType(
           'info',
           'Current Position',
-          `Lat: ${snapshot.val().location.lat},Long: ${
-            snapshot.val().location.long
-          } at ${new Date(snapshot.val().time).toString()}`,
+          `Lat: ${longitude},Long: ${longitude} at ${time.toString()}`,
           {},
           4000,
         );
         this.setState({
           marker: {
             location: {
-              latitude: snapshot.val().location.lat,
-              longitude: snapshot.val().location.long,
+              latitude: latitude,
+              longitude: longitude,
             },
-            time: snapshot.val().time,
+            time: time,
           },
         });
       })
