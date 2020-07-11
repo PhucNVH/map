@@ -4,11 +4,13 @@ import {Slider, Button, Icon} from 'react-native-elements';
 import NetInfo from '@react-native-community/netinfo';
 import DropdownAlert from 'react-native-dropdownalert';
 import DropDownPicker from 'react-native-dropdown-picker';
-import database from '@react-native-firebase/database';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 import colors from '../../Themes/Colors';
 export default class LightButton extends React.Component {
   constructor() {
     super();
+    this.user = auth().currentUser;
     this.state = {
       startAngle: (Math.PI * 0) / 6,
       angleLength: (Math.PI * 12) / 6,
@@ -23,14 +25,19 @@ export default class LightButton extends React.Component {
     };
   }
   componentDidMount() {
-    database()
-      .ref('Light/Light/latest')
-      .once('value')
-      .then((snapshot) => {
-        const res = snapshot.val();
+    firestore()
+      .collection('ship')
+      .doc(this.user.uid)
+      .onSnapshot((snapshot) => {
+        const data = snapshot.data();
+        console.log(data);
+        if (data.state == undefined || data.brightness == undefined) {
+          data.state = 0;
+          data.brightness = 0;
+        }
         this.setState({
-          switchValue: res.state == 1 ? true : false,
-          value: Number.parseInt(res.brightness, 10) / 255,
+          switchValue: data.state == 1 ? true : false,
+          value: Number.parseInt(data.brightness, 10) / 255,
         });
       });
   }
