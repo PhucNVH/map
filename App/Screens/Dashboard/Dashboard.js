@@ -40,12 +40,15 @@ export default class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    database()
-      .ref('GPS/latest/')
-      .on('value', (snapshot) => {
-        this.setState({isLoading: true});
-        const result = snapshot.val();
-        console.log(result);
+    this._newestLocation = firestore()
+      .collection('ship')
+      .doc(this.user.uid)
+      .onSnapshot((snapshot) => {
+        const data = snapshot.data();
+        const latitude = data.location._latitude;
+        const longitude = data.location._longitude;
+        const time = new Date(data.time._seconds * 1000);
+        const result = {location: {lat: latitude, long: longitude}, time};
         this.setState({
           latest: result,
         });

@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import database from '@react-native-firebase/database';
 import Geolocation from '@react-native-community/geolocation';
 import NetInfo from '@react-native-community/netinfo';
-import {getDistance, convertSpeed} from 'geolib';
+import {getDistance, convertSpeed, timeConversion} from 'geolib';
 import firestore from '@react-native-firebase/firestore';
 import {Polyline} from 'react-native-maps';
 
@@ -56,12 +56,18 @@ export default class Map extends React.Component {
     const {listGPS, point} = this.props.route.params;
     if (listGPS) {
       const listPoints = listGPS.map((e) => ({
-        latitude: e.location.lat,
-        longitude: e.location.long,
+        location: {
+          latitude: e.location.lat,
+          longitude: e.location.long,
+        },
+        time: e.time,
       }));
       let distance = 0;
       for (let i = 1; i < listPoints.length; i++) {
-        distance += getDistance(listPoints[i], listPoints[i - 1]);
+        distance += getDistance(
+          listPoints[i].location,
+          listPoints[i - 1].location,
+        );
       }
       const speed = convertSpeed(
         this.calSpeed(
@@ -70,6 +76,17 @@ export default class Map extends React.Component {
           listGPS[listGPS.length - 1].time,
         ),
         'kmh',
+      );
+      const time = Math.ceil(
+        Math.abs(listGPS[listGPS.length - 1].time - listGPS[0].time) /
+          (1000 * 60 * 60),
+      );
+      this.dropDownAlertRef.alertWithType(
+        'info',
+        'Path',
+        `Distance: ${
+          distance / 1000
+        } (kms), Time: ${time} (hours), Speed: ${speed.toFixed(3)} (kph)`,
       );
       this.setState({listPoints, distance, speed});
     } else if (point) {
@@ -123,7 +140,7 @@ export default class Map extends React.Component {
             this.onRegionChange(region);
           }}>
           <Polyline
-            coordinates={this.state.listPoints}
+            coordinates={this.state.listPoints.map((e) => e.location)}
             strokeWidth={3}
             strokeColor="#283747"
             tappable={true}
@@ -135,7 +152,9 @@ export default class Map extends React.Component {
                 <Marker
                   key={i}
                   anchor={{x: 0.5, y: 0.5}}
-                  coordinate={e}
+                  coordinate={e.location}
+                  title={`Position at ${e.time.toString()}`}
+                  description={`Lat: ${e.location.latitude}, Long: ${e.location.longitude}`}
                   image={require('../../Assets/Images/marker.png')}
                 />
               );
