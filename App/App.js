@@ -4,6 +4,7 @@ import AppConnector from './Services/AppConnector';
 import {AppContext} from './Context/AppContext';
 
 import auth from '@react-native-firebase/auth';
+console.disableYellowBox = true;
 export default class App extends React.Component {
   _isMounted = false;
   constructor(props) {

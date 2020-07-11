@@ -6,6 +6,7 @@ import strings from '../../Themes/Strings';
 import imageLogo from '../../Assets/Images/cargo-ship.png';
 import auth from '@react-native-firebase/auth';
 import {Overlay, Button} from 'react-native-elements';
+import DropdownAlert from 'react-native-dropdownalert';
 function Login() {
   const name = 'ShipTracker';
   const interval = 15 * 60 * 1000;
@@ -46,6 +47,7 @@ function Login() {
 
   return (
     <View style={styles.container}>
+      <DropdownAlert ref={(ref) => (this.dropDownAlertRef = ref)} />
       <Overlay isVisible={Show} onBackdropPress={() => setShow(false)}>
         <View>
           <Text>Need help?</Text>

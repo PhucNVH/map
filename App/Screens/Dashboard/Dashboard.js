@@ -1,13 +1,11 @@
 import React from 'react';
-import {StyleSheet, Text, View, FlatList, Modal} from 'react-native';
+import {StyleSheet, Text, View, FlatList, ImageBackground} from 'react-native';
 import {
   Button,
   Card,
   ButtonGroup,
   ListItem,
-  Image,
   Avatar,
-  SearchBar,
   Overlay,
   Icon,
 } from 'react-native-elements';
@@ -16,7 +14,6 @@ import {AppContext} from '../../Context/AppContext';
 import database, {firebase} from '@react-native-firebase/database';
 import SpinKit from 'react-native-spinkit';
 import firestore from '@react-native-firebase/firestore';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import auth from '@react-native-firebase/auth';
 export default class Dashboard extends React.Component {
   static contextType = AppContext;
@@ -145,13 +142,13 @@ export default class Dashboard extends React.Component {
   component2 = () => (
     <View>
       <Icon name="user-friends" size={20} type="font-awesome-5" />
-      <Text>Friendships</Text>
+      <Text>Friends</Text>
     </View>
   );
   component3 = () => (
     <View>
       <Icon name="pirate" size={20} type="material-community" />
-      <Text>Enermyships</Text>
+      <Text>Enemies</Text>
     </View>
   );
   renderItem = ({item}) => (
@@ -200,55 +197,59 @@ export default class Dashboard extends React.Component {
           </Overlay>
         )}
         <View style={styles.userContainer}>
-          <View style={styles.headerButton}>
-            <Button
-              icon={
-                <Icon
-                  name="power-off"
-                  color="red"
-                  size={30}
-                  type="font-awesome"
-                />
-              }
-              raised={true}
-              containerStyle={styles.logOut}
-              onPress={this.logOut}
-              type="clear"
-            />
-            <Button
-              icon={<Icon name="bell-o" size={30} type="font-awesome" />}
-              raised={true}
-              containerStyle={styles.noti}
-              onPress={this.viewNoti}
-              type="clear"
-            />
-          </View>
-          <View style={styles.avatarWrapper}>
-            <Avatar
-              containerStyle={styles.avatar}
-              source={
-                this.user.photoURL
-                  ? {
-                      uri: this.user.photoURL,
-                    }
-                  : require('../../Assets/Images/marker.png')
-              }
-              editButton={true}
-              size={100}
-              overlayContainerStyle={{backgroundColor: 'white'}}
-              rounded
-            />
-            <Text style={styles.name}>{this.user.displayName}</Text>
-            {/* <Text style={styles.nation}>Nationality</Text> */}
-          </View>
-          <View style={styles.buttonGroupContainer}>
-            <ButtonGroup
-              onPress={this.updateIndex}
-              buttons={buttons}
-              containerStyle={styles.buttonGroup}
-              i
-            />
-          </View>
+          <ImageBackground
+            source={require('../../Assets/Images/OGMMBE0-min.jpg')}
+            style={styles.backgroundImage}>
+            <View style={styles.headerButton}>
+              <Button
+                icon={
+                  <Icon
+                    name="power-off"
+                    color="red"
+                    size={30}
+                    type="font-awesome"
+                  />
+                }
+                raised={true}
+                containerStyle={styles.logOut}
+                onPress={this.logOut}
+                type="clear"
+              />
+              <Button
+                icon={<Icon name="bell-o" size={30} type="font-awesome" />}
+                raised={true}
+                containerStyle={styles.noti}
+                onPress={this.viewNoti}
+                type="clear"
+              />
+            </View>
+            <View style={styles.avatarWrapper}>
+              <Avatar
+                containerStyle={styles.avatar}
+                source={
+                  this.user.photoURL
+                    ? {
+                        uri: this.user.photoURL,
+                      }
+                    : require('../../Assets/Images/marker.png')
+                }
+                editButton={true}
+                size={100}
+                overlayContainerStyle={{backgroundColor: 'white'}}
+                rounded
+              />
+              <Text style={styles.name}>{this.user.displayName}</Text>
+              {/* <Text style={styles.nation}>Nationality</Text> */}
+            </View>
+            <View style={styles.buttonGroupContainer}>
+              <ButtonGroup
+                onPress={this.updateIndex}
+                buttons={buttons}
+                containerStyle={styles.buttonGroup}
+                i
+              />
+            </View>
+          </ImageBackground>
         </View>
         <View style={styles.infoContainer}>
           <Card title="LATEST GPS LOCATION" containerStyle={styles.card}>
@@ -334,6 +335,7 @@ const styles = StyleSheet.create({
     flex: 3,
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#87dfd6',
   },
   avatarWrapper: {
     justifyContent: 'center',
@@ -394,5 +396,12 @@ const styles = StyleSheet.create({
     borderRadius: 23,
     marginTop: 5,
     marginRight: 5,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
   },
 });

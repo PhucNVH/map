@@ -44,10 +44,7 @@ export default class Map extends React.Component {
         latitudeDelta: 2,
         longitudeDelta: 2,
       },
-      marker: {
-        location: {latitude: 9.5, longitude: 110},
-        time: 0,
-      },
+      marker: null,
     };
   }
 
@@ -90,6 +87,13 @@ export default class Map extends React.Component {
       );
       this.setState({listPoints, distance, speed});
     } else if (point) {
+      console.log(point);
+      this.map.animateCamera(
+        {
+          center: point.location,
+        },
+        1000,
+      );
       this.setState({
         marker: {
           location: point.location,
@@ -159,6 +163,15 @@ export default class Map extends React.Component {
                 />
               );
             })}
+          {this.state.marker != null && (
+            <Marker
+              onCalloutPress={this.drawPolyline}
+              anchor={{x: 0.5, y: 0.5}}
+              coordinate={this.state.marker.location}
+              title={`Position at: ${this.state.marker.time.toString()}`}
+              description={`Lat: ${this.state.marker.location.latitude}, Long: ${this.state.marker.location.longitude}`}
+            />
+          )}
           {this.state.warningPoints.length > 0 &&
             this.state.warningPoints.map((e, i) => {
               return (
