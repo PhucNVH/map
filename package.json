@@ -27,7 +27,7 @@
     "moment": "^2.27.0",
     "mqtt": "^4.1.0",
     "react": "16.11.0",
-    "react-native": "0.62.2",
+    "react-native": "0.62.3",
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-calendar-picker": "^6.1.4",
     "react-native-cli": "^2.0.1",
