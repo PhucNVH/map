@@ -37,7 +37,7 @@
     "react-native-gesture-handler": "^1.6.1",
     "react-native-ionicons": "^5.0.0-rc",
     "react-native-maps": "0.27.1",
-    "react-native-reanimated": "^1.9.0",
+    "react-native-reanimated": "^2.10.0",
     "react-native-safe-area-context": "^1.0.0",
     "react-native-screens": "^2.8.0",
     "react-native-spinkit": "^1.5.0",
